@@ -1,0 +1,99 @@
+========================================
+【ASerial 環境依存クラス実装ガイド】
+目的：ASerial通信を行うために必要な機能群を抽象化し、
+ユーザーが任意の環境に合わせて設計できるようにする。
+対象：Windows / Android / macOS / Linux / MCU など
+========================================
+
+[想定役割]
+このクラスは、ASerialPacketクラスをラップし、
+OSやデバイス固有の通信I/Oや機器制御と接続するためのインターフェースを提供します。
+ASerialのコアクラスであるASerial_packetを継承して実装してください。
+
+[クラス命名規則]
+ASerial_lib_<対応モード(Controller or Device)>_<環境名>
+
+* 例: ASerial_lib_Controller_Win, ASerial_lib_Device_Android
+* モードが両方に対応する場合は、省略可
+
+-------------------------------
+■ 必須: 通信インターフェース接続(通信インターフェイスのクラスをポインタでもらうことで複数のインターフェイスをサポート)
+-------------------------------
+
+void SetInterfacePt(StreamLikeInterface* interface)
+
+→ 通信ポート（シリアル、USB、Bluetoothなど）との接続設定  
+→ 実装側は以下の機能を持つ必要あり：
+   - write(uint8_t* data, size_t length)    :1バイトずつ送信できる機能
+   - available()                            :受信バッファのデータ数を取得できる機能
+   - read()                                 :1バイトずつ受信できる機能 
+
+※Arduinoでは Stream を使うが、他環境では独自のI/Oラッパーを用意する
+
+-------------------------------
+■ 任意: 外部リセット処理の登録(デバイス向けのクラスを実装する場合は必須)
+-------------------------------
+
+void SetResetFuncPt(void (*func_pt)(void))
+
+→ RESET コマンドを受信した際に実行される外部処理の登録  
+→ ハードウェア初期化などに利用
+
+-------------------------------
+■ 必須: 受信処理の実行
+-------------------------------
+
+int ReadDataProcess(ASerialData* read_data_buf)
+
+→ 通信バッファから1バイトずつ取得 → ReadPacketData() へ渡す  
+→ パケットが完了したら：(デバイス向けクラスの場合)
+   - RESET コマンドなら ResetFunc を呼び出し
+   - GET_INFO コマンドなら デバイス情報を送信 を呼び出し
+
+戻り値：
+   -1 : エラー  
+    0 : 継続読込(パケット読み取り中)
+    1 : パケット読み取り完了
+
+-------------------------------
+■ 必須: データ送信関数
+-------------------------------
+
+int WriteData(uint8_t command, uint8_t* data, uint8_t data_num)  // コントローラ向け  
+int WriteData(uint8_t* data, uint8_t data_num)                   // デバイス向け
+
+→ パケット生成 → インターフェースへ送信  
+→ モード判定あり。失敗時は -1 を返す
+
+-------------------------------
+■ 任意: デバイス情報送信（GET_INFO 応答）
+-------------------------------
+
+int WriteDeviceInfo()
+
+→ ID / Ver / ASerial_VER を構成して送信
+
+-------------------------------
+■ クラス設計上のヒント
+-------------------------------
+
+- モードは ASerialPacket::GetMode() で判定できる（デバイス or コントローラ）
+- バッファは MakePacketData() で生成し、GetNeedPacketBufSize() でサイズを取得
+- 送信後は delete[] によるバッファ解放を忘れずに
+
+-------------------------------
+■ 実装対象プラットフォーム別メモ
+-------------------------------
+
+[Windows]
+- 通信: Win32API または C# SerialPort  
+- I/O: ReadFile / WriteFile など
+
+[Android]
+- 通信: UsbSerial, BluetoothSocket  
+
+[macOS / Linux]
+- 通信: termios + read/write  
+
+[MCU系（STM32 / ESP32）]
+- 通信: HAL_UART / Serial  
