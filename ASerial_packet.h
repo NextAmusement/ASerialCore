@@ -1,3 +1,8 @@
+// MIT License
+// Copyright(c) 2025 NextAmusement
+// See LICENSE file in the root directory.
+
+
 #include "ASerial_ErrorCodeList.h"
 #ifdef ARDUINO //ArduinoIDE環境
 #include <Arduino.h>
@@ -38,7 +43,6 @@ namespace ASerialDataStruct {
 class ASerialPacket {
 public:
   //===public定数===
-  static const uint16_t ASERIAL_VER = 100;  //ASerialのバージョン
   static const uint8_t MODE_DEVICE = 0;                   //デバイスモード
   static const uint8_t MODE_CONTROLLER = 1;               //コントローラモード
   static const uint8_t RESERVED_COMMAND_RESET = 0x00;     //予約済みコマンド リセット
@@ -143,7 +147,7 @@ private:
   uint16_t m_lase_error_code = static_cast<uint16_t>(ASerial::ErrorCodeList::ERR_NONE);     //最後にエラーになったときのエラーコード
   bool m_connection_state = false;        //コントローラモード時の接続ステータス
 
-  //@brief フラグをリセット
+  /// @brief フラグをリセット
   void ResetFlags(void);
 
   /// @brief データ配列をリセット

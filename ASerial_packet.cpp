@@ -1,3 +1,7 @@
+// MIT License
+// Copyright(c) 2025 NextAmusement
+// See LICENSE file in the root directory.
+
 #include "ASerial_packet.h"
 
 #include "ASerial_ErrorCodeList.h"

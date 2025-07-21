@@ -1,0 +1,30 @@
+# CHANGELOG-チェンジログ
+
+## Active Version
+**[1.0.0]**
+
+---
+
+
+
+
+## [1.0.0] - 2025-07-20
+
+### Added
+- チェンジログの記録を開始
+- ASerialCoreをほかプロジェクトから独立化
+- MITライセンスの追加
+
+## Removed
+- 初期リリースに伴う不要なファイルの削除
+- 不要なコメントの削除
+- 不要なコードの削除
+---
+
+
+
+## [フォーマットルール]
+
+- 各バージョンは SemVer（MAJOR.MINOR.PATCH）で管理
+- 日付は ISO形式 `YYYY-MM-DD` で記載
+- セクション分類の例：`Added`, `Changed`, `Fixed`, `Removed`, `Deprecated`, `Security`

@@ -1,3 +1,7 @@
+// MIT License
+// Copyright(c) 2025 NextAmusement
+// See LICENSE file in the root directory.
+
 #include <stdint.h>
 
 #ifndef ASERIAL_ERRPRCODELIST_H
