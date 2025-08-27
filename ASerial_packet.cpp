@@ -428,7 +428,7 @@ int ASerialPacket::MakePacketData(uint8_t *to_device_data, int data_num, uint8_t
         ++index;
     }
 
-    int8_t check_data[2] = {0};  // チェックデータ分割用([1]上位バイト [2]下位バイト)
+    uint8_t check_data[2] = {0};  // チェックデータ分割用([1]上位バイト [2]下位バイト)
 
     check_data[0] = (uint8_t)((check_sum & 0xFF00) >> 8);  // 上位バイト抽出
     check_data[1] = (uint8_t)(check_sum & 0x00FF);         // 下位バイト抽出
@@ -499,10 +499,10 @@ int ASerialPacket::MakePacketData(uint8_t *to_controller_data, int data_num, uin
         // Serial.println(st);
     }
 
-    int8_t check_data[2] = {0};  // チェックデータ分割用([1]上位バイト [2]下位バイト)
+    uint8_t check_data[2] = {0};  // チェックデータ分割用([1]上位バイト [2]下位バイト)
 
-    check_data[1] = (uint8_t)((check_sum & 0xFF00) >> 8);  // 上位バイト抽出
-    check_data[2] = (uint8_t)(check_sum & 0x00FF);         // 下位バイト抽出
+    check_data[0] = (uint8_t)((check_sum & 0xFF00) >> 8);  // 上位バイト抽出
+    check_data[1] = (uint8_t)(check_sum & 0x00FF);         // 下位バイト抽出
 
     CheckDataNeedAddFlag(check_data[0], data_packet_out, &index);
     ++index;
